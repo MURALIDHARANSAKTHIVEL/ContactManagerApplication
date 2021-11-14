@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="HeaderView" customModule="ContactManager" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="160"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4FL-em-AHV">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="160"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TeA-j0-Dd4">
+                            <rect key="frame" x="20" y="10" width="390" height="140"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kz6-cL-28j">
+                            <rect key="frame" x="420" y="60" width="40" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="KcX-hH-u03"/>
+                                <constraint firstAttribute="width" constant="40" id="kgM-8r-IFd"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <state key="normal" image="arrow.down" catalog="system"/>
+                            <state key="selected" image="arrow.up" catalog="system"/>
+                            <connections>
+                                <action selector="orderAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="yH8-pI-z56"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="kz6-cL-28j" firstAttribute="leading" secondItem="TeA-j0-Dd4" secondAttribute="trailing" constant="10" id="3LF-EH-byW"/>
+                        <constraint firstItem="TeA-j0-Dd4" firstAttribute="top" secondItem="4FL-em-AHV" secondAttribute="top" constant="10" id="HsV-7p-5dW"/>
+                        <constraint firstItem="kz6-cL-28j" firstAttribute="centerY" secondItem="TeA-j0-Dd4" secondAttribute="centerY" id="Q2c-j2-N71"/>
+                        <constraint firstAttribute="bottom" secondItem="TeA-j0-Dd4" secondAttribute="bottom" constant="10" id="ZH1-Hp-tTG"/>
+                        <constraint firstAttribute="trailing" secondItem="kz6-cL-28j" secondAttribute="trailing" constant="20" id="aG1-D9-bnE"/>
+                        <constraint firstItem="TeA-j0-Dd4" firstAttribute="leading" secondItem="4FL-em-AHV" secondAttribute="leading" constant="20" id="tll-iD-Tep"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="4FL-em-AHV" secondAttribute="trailing" id="PDi-Ti-ydV"/>
+                <constraint firstAttribute="bottom" secondItem="4FL-em-AHV" secondAttribute="bottom" id="PFf-h4-Dhc"/>
+                <constraint firstItem="4FL-em-AHV" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="p3I-cV-v3H"/>
+                <constraint firstItem="4FL-em-AHV" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="uxA-DL-36e"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="orderButton" destination="kz6-cL-28j" id="aBq-Kd-7VG"/>
+                <outlet property="titleUILabel" destination="TeA-j0-Dd4" id="lKR-Au-mKH"/>
+            </connections>
+            <point key="canvasLocation" x="89.855072463768124" y="5.3571428571428568"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="arrow.down" catalog="system" width="120" height="128"/>
+        <image name="arrow.up" catalog="system" width="120" height="128"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OX9-0V-CGW">
+                                <rect key="frame" x="20" y="346.5" width="374" height="203.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uUS-v7-pfP">
+                                        <rect key="frame" x="10" y="10" width="354" height="41"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X6j-6c-pa9">
+                                        <rect key="frame" x="10" y="61" width="354" height="41"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="34"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contact Manger Application" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="exO-tm-9ZV">
+                                        <rect key="frame" x="10" y="112" width="354" height="81.5"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="34"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="exO-tm-9ZV" firstAttribute="leading" secondItem="OX9-0V-CGW" secondAttribute="leading" constant="10" id="Adj-a7-yI0"/>
+                                    <constraint firstAttribute="bottom" secondItem="exO-tm-9ZV" secondAttribute="bottom" constant="10" id="Bmc-6j-Hwv"/>
+                                    <constraint firstAttribute="trailing" secondItem="uUS-v7-pfP" secondAttribute="trailing" constant="10" id="M5q-TU-Edr"/>
+                                    <constraint firstAttribute="trailing" secondItem="exO-tm-9ZV" secondAttribute="trailing" constant="10" id="Pr6-ut-HkU"/>
+                                    <constraint firstItem="X6j-6c-pa9" firstAttribute="leading" secondItem="OX9-0V-CGW" secondAttribute="leading" constant="10" id="SLG-nB-a9M"/>
+                                    <constraint firstItem="uUS-v7-pfP" firstAttribute="top" secondItem="OX9-0V-CGW" secondAttribute="top" constant="10" id="azS-xT-wsr"/>
+                                    <constraint firstItem="X6j-6c-pa9" firstAttribute="top" secondItem="uUS-v7-pfP" secondAttribute="bottom" constant="10" id="dYy-nM-Qu7"/>
+                                    <constraint firstItem="uUS-v7-pfP" firstAttribute="leading" secondItem="OX9-0V-CGW" secondAttribute="leading" constant="10" id="hlL-PF-Gmr"/>
+                                    <constraint firstAttribute="trailing" secondItem="X6j-6c-pa9" secondAttribute="trailing" constant="10" id="vKg-Hx-vOg"/>
+                                    <constraint firstItem="exO-tm-9ZV" firstAttribute="top" secondItem="X6j-6c-pa9" secondAttribute="bottom" constant="10" id="zym-uv-skX"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="OX9-0V-CGW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="7dY-tQ-rKL"/>
+                            <constraint firstItem="OX9-0V-CGW" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="C0n-zF-XbW"/>
+                            <constraint firstItem="OX9-0V-CGW" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="KZr-5Y-La4"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="OX9-0V-CGW" secondAttribute="trailing" constant="20" id="V5O-Xl-otR"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="welcomeUILabel" destination="uUS-v7-pfP" id="dZT-W2-B3o"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="52.173913043478265" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
