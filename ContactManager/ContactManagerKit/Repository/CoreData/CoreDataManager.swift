@@ -13,12 +13,13 @@ public class CoreDataManager {
     let context = AppDelegate().persistentContainer.viewContext
     /// T - Cusotm entity
     func fetchAllData<T: NSManagedObject>(_ entity: T.Type) -> [T]? {
+        
         let fetchRequest = T.fetchRequest()
         let data = try? context.fetch(fetchRequest) as? [T]
         return data
     }
     /// Insert the Data into Core data
-    func insertData<T>(model: T) {
+    func insertData<T>(model: T, at: Int16 = 0) {
         if let item = model as? Contact { /// Based on T - Model will unwraped
             let datamodel = Contacts(context: context)
             datamodel.address = item.address
@@ -33,16 +34,24 @@ public class CoreDataManager {
             datamodel.country = item.country
             datamodel.email = item.email
             datamodel.website = item.website
+            datamodel.sortId = at
             datamodel.profile = imageload(from: item.photo ?? "") /// Store Image to BinaryData
             ///Save into DB
-            try! context.save()
+            saveData()
         }
     }
     /// Filter  the Data based on  query
-    func fetchFilterData<T: NSManagedObject>(_ entity: T.Type, query: String)-> [T]? {
+    func fetchFilterData<T: NSManagedObject>(_ entity: T.Type, query: String, key: String = "" )-> [T]? {
+       
         let fetchRequest = T.fetchRequest()
-        let pred = NSPredicate(format: query)
-        fetchRequest.predicate = pred
+       //if key != "" {
+            let sort = NSSortDescriptor(key: "sortId", ascending: true)
+            fetchRequest.sortDescriptors = [sort]
+        //}
+        if query != "" {
+            let pred = NSPredicate(format: query)
+            fetchRequest.predicate = pred
+        }
         let data = try? context.fetch(fetchRequest) as? [T]
         return data
     }
@@ -56,5 +65,17 @@ public class CoreDataManager {
             return data
         }
         return Data()
+    }
+    func saveData() {
+        ///Save into DB
+        try! context.save()
+        
+    }
+    func delete<T>(model: T) {
+        if let deletemodel = model as? Contacts {
+            //var contacts = UserManager.shared.contacts
+            context.delete(deletemodel)
+            try! context.save()
+        }
     }
 }

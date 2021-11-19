@@ -47,8 +47,8 @@ public class  ContactDataViewModel {
     }
     ///Insert the data to CoerData
     private func sortedContacts() {
-        for contact in contactList {
-            coreDataManager.insertData(model: contact)
+        for (index,contact) in contactList.enumerated() {
+            coreDataManager.insertData(model: contact, at: Int16(index))
         }
     }
 }

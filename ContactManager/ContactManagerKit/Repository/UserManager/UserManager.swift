@@ -8,7 +8,8 @@
 import Foundation
 public class UserManager {
     static let shared: UserManager = UserManager()
-    var contacts: [Contacts]? = CoreDataManager.shared.fetchAllData(Contacts.self)
+    var contacts: [Contacts]? = CoreDataManager.shared.fetchFilterData(Contacts.self, query: "", key: "")
+    
     var contactList: [ContactUIModel] {
         return groupItem(list: contacts ?? [])
     }
@@ -23,9 +24,11 @@ public class UserManager {
                 uniqueDataList.append(firstletter)
             }
         }
-        let sortingOrder = UserDefaults.standard.bool(forKey: "DescContactOrder") /// based order value sordering
+        let sortingOrder = UserDefaults.standard.string(forKey: "DescContactOrder") ?? ""
+        let type = SortOrderType.init(rawValue: sortingOrder)
+        /// based order value sordering
         uniqueDataList = uniqueDataList.sorted(by: { (item1, item2) -> Bool in
-            return sortingOrder ? item1 ?? "" > item2 ?? ""  :  item1 ?? "" < item2 ?? "" })
+            return type == .ZToA ? item1 ?? "" > item2 ?? ""  :  item1 ?? "" < item2 ?? "" })
         for uniqueLetter in uniqueDataList {
             let groupItems = list.filter({$0.name?.prefix(1).components(separatedBy: " ").first == uniqueLetter})
             contactdataList.append(.init(title: uniqueLetter, contactList: groupItems))

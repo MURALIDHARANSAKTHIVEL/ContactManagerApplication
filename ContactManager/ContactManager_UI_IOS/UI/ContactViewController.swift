@@ -12,7 +12,7 @@ class ContactViewController: UIViewController {
     
     @IBOutlet weak var searchTextField: UISearchBar!
     var viewmodel: ContactListViewModel = ContactListViewModel() /// Viewmodel for store Data to show UI
-    var searchActivate: Bool = false /// Is User active in Search Sessions
+    var searchActivate: Bool = true /// Is User active in Search Sessions
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -23,6 +23,10 @@ class ContactViewController: UIViewController {
         self.tableview.register(ContactTableViewCell.nib, forCellReuseIdentifier: ContactTableViewCell.identifier)
         self.tableview.register(HeaderView.nib, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
         self.searchTextField.delegate = self
+        tableview.dragInteractionEnabled = true // Enable intra-app drags for iPhone.
+        tableview.dragDelegate = self
+        tableview.dropDelegate = self
+        self.tableview.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -30,13 +34,16 @@ class ContactViewController: UIViewController {
     }
     /// Back the UI to refresh the Viewmodel data
     private func refreshUIModel() {
-        self.viewmodel.contactList = UserManager.shared.contactList
         self.navigationSetup()
-        if searchActivate { /// To check the Active and group the unsorted list
-            viewmodel.ungroupedContactList = UserManager.shared.contacts
-            self.viewmodel.searchList(searchTextField.text ?? "", isActive: true)
+        /// To check the Active and group the unsorted list
+        viewmodel.ungroupedContactList = UserManager.shared.contacts
+        self.viewmodel.contactList = UserManager.shared.contactList
+        if viewmodel.sortOrderType == .ReOrder {
+        viewmodel.sortedOrder()
         }
+        self.viewmodel.searchList(searchTextField.text ?? "", isActive: viewmodel.searchIsActive)
         self.tableview.reloadData()
+        self.navigationleftBarItem()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -52,21 +59,44 @@ class ContactViewController: UIViewController {
             }
         }
     }
+    private func navigationleftBarItem() {
+        let usersItem = UIAction(title: "custom order", image: UIImage(systemName: "person.fill")) { (action) in
+            self.sortOrderMethod(.ReOrder)
+        }
+        
+        let addUserItem = UIAction(title: "A-Z", image: UIImage(systemName: "arrow.down")) { (action) in
+            self.sortOrderMethod(.AToZ)
+        }
+        
+        let removeUserItem = UIAction(title: "Z-A", image: UIImage(systemName: "arrow.up")) { (action) in
+            self.sortOrderMethod(.ZToA)
+        }
+        
+        let menu = UIMenu( options: .destructive , children: [usersItem , addUserItem , removeUserItem])
+        let navItems = [UIBarButtonItem(image:  UIImage(systemName: "plus"), menu: menu)]
+        self.navigationItem.rightBarButtonItems = navItems
+    }
+    private func sortOrderMethod(_ sortOrder: SortOrderType) {
+        self.viewmodel.sortOrderType = sortOrder
+        self.viewmodel.sortedOrder()
+        self.tableview.reloadData()
+        self.tableview.dragInteractionEnabled = sortOrder == .ReOrder
+        self.searchTextField.text = ""
+    }
 }
 ///Mark:- Seperation of code - UITableView Configuration
 extension ContactViewController: UITableViewDataSource, UITableViewDelegate {
     ///Mark:- Based on searchActivate key
     ///show the Sorted list and Filter List result
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchActivate == false ? viewmodel.rowCount(section: section) : (viewmodel.filterContactList?.count ?? 0)
+        return viewmodel.rowCount(section: section)
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        return searchActivate == false ? viewmodel.count : 1
-    }
+        return viewmodel.secondCount    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableview.dequeueReusableCell(withIdentifier: ContactTableViewCell.identifier, for: indexPath) as? ContactTableViewCell
-        let model =  searchActivate == false ? viewmodel[indexPath] : viewmodel.filterContactList?[indexPath.row]
-        cell?.set(from: model ?? .init())
+        let model =  viewmodel[indexPath]
+        cell?.set(from: model ?? Contacts() )
         cell?.cellSelectedAction {
             self.performSegue(withIdentifier: ContactEditViewController.identifier, sender: model)
         }
@@ -77,6 +107,9 @@ extension ContactViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard viewmodel.searchIsActive == false && viewmodel.sortOrderType != .ReOrder else {
+            return UIView()
+        }
         guard let headerView = tableview.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier ) as? HeaderView else {
             fatalError("Unable to cast to HeaderView")
         }
@@ -90,24 +123,35 @@ extension ContactViewController: UITableViewDataSource, UITableViewDelegate {
         return headerView
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return searchActivate == false ? 40 : 0
+        if viewmodel.sortOrderType == .ReOrder { /// no need for custom Order
+            return 0
+        } else {
+            return viewmodel.searchIsActive == false ? 40 : 0
+        }
+        
+    }
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        /// to get source and destination
+        viewmodel.moveItem(at: sourceIndexPath.row, to: destinationIndexPath.row)
     }
 }
 ///Mark:- Seperation of code - UISearchbar Configuration
 extension ContactViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         guard searchText != "" else {
-            self.searchActivate = false
+            self.viewmodel.searchIsActive = false
+            self.tableview.dragInteractionEnabled = viewmodel.sortOrderType == .ReOrder
             self.tableview.reloadData()
             return
         }
-        self.searchActivate = true
+        self.viewmodel.searchIsActive = true
         self.viewmodel.searchList(searchText, isActive: true)
+        self.tableview.dragInteractionEnabled = false
         self.tableview.reloadData()
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if searchTextField.text == "" || searchTextField.text == nil {
-            searchActivate = false
+            self.viewmodel.searchIsActive = false
         }
         searchTextField.resignFirstResponder()
         self.tableview.reloadData()
@@ -115,5 +159,86 @@ extension ContactViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.searchActivate = false
         self.tableview.reloadData()
+    }
+}
+
+extension ContactViewController: UITableViewDragDelegate {
+    // MARK: - UITableViewDragDelegate
+    /**
+     The `tableView(_:itemsForBeginning:at:)` method is the essential method
+     to implement for allowing dragging from a table.
+     */
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        return viewmodel.dragItems(for: indexPath)
+    }
+}
+
+
+extension ContactViewController: UITableViewDropDelegate {
+    // MARK: - UITableViewDropDelegate
+    
+    /**
+     Ensure that the drop session contains a drag item with a data representation
+     that the view can consume.
+     */
+    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
+        return session.canLoadObjects(ofClass: NSString.self)
+        
+    }
+    
+    /**
+     A drop proposal from a table view includes two items: a drop operation,
+     typically .move or .copy; and an intent, which declares the action the
+     table view will take upon receiving the items. (A drop proposal from a
+     custom view does includes only a drop operation, not an intent.)
+     */
+    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+        var dropProposal = UITableViewDropProposal(operation: .cancel)
+        
+        // Accept only one drag item.
+        guard session.items.count == 1 else { return dropProposal }
+        
+        // The .move drag operation is available only for dragging within this app and while in edit mode.
+        if tableView.hasActiveDrag {
+            dropProposal = UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        } else {
+            // Drag is coming from outside the app.
+            dropProposal = UITableViewDropProposal(operation: .copy, intent: .insertAtDestinationIndexPath)
+        }
+        
+        return dropProposal
+    }
+    
+    /**
+     This delegate method is the only opportunity for accessing and loading
+     the data representations offered in the drag item. The drop coordinator
+     supports accessing the dropped items, updating the table view, and specifying
+     optional animations. Local drags with one item go through the existing
+     `tableView(_:moveRowAt:to:)` method on the data source.
+     */
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        let destinationIndexPath: IndexPath
+        
+        if let indexPath = coordinator.destinationIndexPath {
+            destinationIndexPath = indexPath
+        } else {
+            // Get last index path of table view.
+            let section = tableView.numberOfSections - 1
+            let row = tableView.numberOfRows(inSection: section)
+            destinationIndexPath = IndexPath(row: row, section: section)
+        }
+        
+        coordinator.session.loadObjects(ofClass: NSString.self) { items in
+            // Consume drag items.
+            let reorderList = items as! [Contacts]
+            
+            var indexPaths = [IndexPath]()
+            for (index, item) in reorderList.enumerated() {
+                let indexPath = IndexPath(row: destinationIndexPath.row + index, section: destinationIndexPath.section)
+                self.viewmodel.addItem(item, at: indexPath.row)
+                indexPaths.append(indexPath)
+            }
+            tableView.insertRows(at: indexPaths, with: .automatic)
+        }
     }
 }

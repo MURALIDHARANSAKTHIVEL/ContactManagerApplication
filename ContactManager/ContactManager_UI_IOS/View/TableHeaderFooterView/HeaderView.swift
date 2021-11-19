@@ -29,8 +29,8 @@ class HeaderView: UITableViewHeaderFooterView, CellReusableIdentifier {
     }
     /// UI Model change
     /// `DescContactOrder` - bool key - used for the Order change store in local device . Is user in differee
-    func set(from item: ContactUIModel) {
-        titleUILabel.text = item.title
+    func set(from item: ContactUIModel?) {
+        titleUILabel.text = item?.title
         orderButton.isSelected = UserDefaults.standard.bool(forKey: "DescContactOrder")
     }
     @IBAction func orderAction(_ sender: UIButton) {
