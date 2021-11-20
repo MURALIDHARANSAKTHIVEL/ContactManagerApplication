@@ -23,7 +23,7 @@ class ContactViewController: UIViewController {
         self.tableview.register(ContactTableViewCell.nib, forCellReuseIdentifier: ContactTableViewCell.identifier)
         self.tableview.register(HeaderView.nib, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
         self.searchTextField.delegate = self
-        tableview.dragInteractionEnabled = true // Enable intra-app drags for iPhone.
+        tableview.dragInteractionEnabled = viewmodel.sortOrderType == .ReOrder // Enable intra-app drags for iPhone.
         tableview.dragDelegate = self
         tableview.dropDelegate = self
         self.tableview.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
