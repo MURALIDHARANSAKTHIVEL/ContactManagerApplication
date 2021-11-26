@@ -75,7 +75,7 @@ public class ContactListViewModel {
     public func moveItem(at sourceIndex: Int, to destinationIndex: Int) {
         guard sourceIndex != destinationIndex else { return }
         
-        /// We can use "sortBYSortId() or reorderData()" method to save sorted
+        /// We can use "sortBYSortId() or reorderData()" method to save reorder data
         /// self.sortBYSordId(at: sourceIndex, to: destinationIndex)
         self.reorderData(at: sourceIndex, to: destinationIndex)
     }
@@ -83,9 +83,6 @@ public class ContactListViewModel {
     ///Using Predicate from CoreData, Its will reoder
     private func reorderData(at sourceIndex: Int, to destinationIndex: Int) {
         if sourceIndex > destinationIndex {/// moving upward reorder
-//            if destinationIndex == self.ungroupedContactList?.count - 1 {
-//                
-//            }
             CoreDataManager.shared.updateSortList(isupward: true,startIndex: destinationIndex, endIndex: sourceIndex)
         } else if destinationIndex > sourceIndex { /// moving downward reorder
             CoreDataManager.shared.updateSortList(isupward: false,startIndex: sourceIndex, endIndex: destinationIndex)
