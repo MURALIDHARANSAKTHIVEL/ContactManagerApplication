@@ -59,7 +59,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         viewmodel.fetchList() // Call API
         /// To get -> publisher once ALL data Set
         viewmodel.fetchContactListPublisher.receive(on: RunLoop.main).sink {_ in
-            UserManager.shared.contacts = self.coreDataManager.fetchAllData(Contacts.self)
+            UserManager.shared.contacts = self.coreDataManager.fetchFilterData(Contacts.self, query: "", key: "")
             self.initalViewController()
         }.store(in: &viewmodel.cancelSet)
     }

@@ -8,23 +8,25 @@
 import Foundation
 import UIKit
 import MobileCoreServices
+import CoreData
 public enum SortOrderType: String {
     case AToZ
     case ZToA
     case ReOrder
 }
+
 public class ContactListViewModel {
     var contactList = UserManager.shared.contactList /// To get date Usermanger
-    var ungroupedContactList = UserManager.shared.contacts /// Usage:- reorder Shorting
-    var filterContactList: [Contacts]? = []
+    var ungroupedContactList = UserManager.shared.contactDetails /// Usage:- reorder Shorting
+    var filterContactList: [Contactdetails]? = []
     var searchIsActive: Bool = false
-   static let sortOrderValue = UserDefaults.standard.string(forKey: "DescContactOrder")
+    static let sortOrderValue = UserDefaults.standard.string(forKey: "DescContactOrder")
     var sortOrderType: SortOrderType = .init(rawValue:  ContactListViewModel.sortOrderValue ?? "ReOrder" ) ?? .ReOrder {
         didSet {
             UserDefaults.standard.set( sortOrderType.rawValue, forKey: "DescContactOrder")
             self.searchIsActive = false
             if sortOrderType == .ReOrder {
-                ungroupedContactList = UserManager.shared.contacts
+                ungroupedContactList = UserManager.shared.contactDetails
             } else {
                 contactList = UserManager.shared.contactList
             }
@@ -47,7 +49,7 @@ public class ContactListViewModel {
     subscript(section: Int) -> ContactUIModel? {
         return contactList[section]
     }
-    subscript(indexPath: IndexPath) -> Contacts? {
+    subscript(indexPath: IndexPath) -> Contactdetails? {
         if searchIsActive == true {
             return filterContactList![indexPath.row]
         } else if sortOrderType == .ReOrder {
@@ -67,27 +69,63 @@ public class ContactListViewModel {
     }
     /// The method for adding a new item to the table view's data model.
     public func addItem(_ model: Contacts, at index: Int) {
-        ungroupedContactList?.insert(model, at: index)
+        //ungroupedContactList?.insert(model, at: index)
     }
     /// The traditional method for rearranging rows in a table view.
     public func moveItem(at sourceIndex: Int, to destinationIndex: Int) {
         guard sourceIndex != destinationIndex else { return }
-        let sourcePriorityModel = ungroupedContactList![sourceIndex]
-        ungroupedContactList?.remove(at: sourceIndex)
-        ungroupedContactList?.insert(sourcePriorityModel, at: destinationIndex)
-        self.reorder(at: sourceIndex, to: destinationIndex)
+        
+        /// We can use "sortBYSortId() or reorderData()" method to save sorted
+        /// self.sortBYSordId(at: sourceIndex, to: destinationIndex)
+        self.reorderData(at: sourceIndex, to: destinationIndex)
     }
-    private func reorder(at sourceIndex: Int, to destinationIndex: Int) {
-        let contacts = UserManager.shared.contacts
-        for (index ,item) in (ungroupedContactList ?? []).enumerated() {
-            let groupItem = item as Contacts
-            let contactItem = contacts?.filter { $0 == groupItem}.first
-            contactItem?.sortId = Int16(index)
+    
+    ///Using Predicate from CoreData, Its will reoder
+    private func reorderData(at sourceIndex: Int, to destinationIndex: Int) {
+        if sourceIndex > destinationIndex {/// moving upward reorder
+//            if destinationIndex == self.ungroupedContactList?.count - 1 {
+//                
+//            }
+            CoreDataManager.shared.updateSortList(isupward: true,startIndex: destinationIndex, endIndex: sourceIndex)
+        } else if destinationIndex > sourceIndex { /// moving downward reorder
+            CoreDataManager.shared.updateSortList(isupward: false,startIndex: sourceIndex, endIndex: destinationIndex)
         }
         self.sortedOrder()
     }
-    public func sortedOrder() { /// save the shorted order in core data
-    try! CoreDataManager.shared.context.save()
+    
+    /// We can iterate btwn the source and destination to change the order of data
+    private func sortBYSordId(at sourceIndex: Int, to destinationIndex: Int) {
+        let contacts = CoreDataManager.shared.fetchFilterData(Contacts.self, query: "", key: "") ?? []
+        if abs(sourceIndex - destinationIndex) == 1   {/// near data reorder
+            let destinationsortId = ungroupedContactList?[destinationIndex].sortId ?? 0
+            let sourcesortId = ungroupedContactList?[sourceIndex].sortId ?? 0
+            contacts[sourceIndex].sortId = destinationsortId
+            contacts[destinationIndex].sortId = sourcesortId
+        } else if sourceIndex < destinationIndex { /// moving downward reorder
+            let destinationsortId = ungroupedContactList?[destinationIndex].sortId ?? 0
+            for row in sourceIndex + 1 ..< destinationIndex+1 {
+                contacts[row].sortId = ungroupedContactList?[row - 1].sortId ?? 0
+            }
+            contacts[sourceIndex].sortId = destinationsortId
+
+        } else if destinationIndex  < sourceIndex  { /// moving upward reorder
+            let destinationsortId = ungroupedContactList?[destinationIndex].sortId ?? 0
+            for row in destinationIndex  ..< sourceIndex {
+                contacts[row].sortId = (ungroupedContactList?[row + 1].sortId)!
+            }
+            contacts[sourceIndex].sortId = destinationsortId
+
+        }
+        self.sortedOrder()
+    }
+    /// Saving the sorted order in the core database
+    public func sortedOrder() {
+        /// save the shorted order in core data
+        if CoreDataManager.shared.context.hasChanges {
+            try! CoreDataManager.shared.context.save()
+            ungroupedContactList =  UserManager.shared.contactDetails
+        }
+        ungroupedContactList =  UserManager.shared.contactDetails
     }
 }
 //MARK: - Drag and drag helper method
@@ -113,5 +151,14 @@ extension ContactListViewModel {
         return [
             UIDragItem(itemProvider: itemProvider)
         ]
+    }
+    public func pickSelectedContact(index: IndexPath) -> Contacts {
+        let contacts = CoreDataManager.shared.fetchFilterData(Contacts.self, query: "", key: "") ?? []
+        if sortOrderType == .ReOrder {
+            return contacts[index.row]
+        }
+        /// Commmon this store to the SortId to help to fetch excat details selcted
+        let details =  contactList[index.section].contactList?[index.row]
+        return contacts.first(where: { $0.sortId == details?.sortId }) ?? Contacts()
     }
 }

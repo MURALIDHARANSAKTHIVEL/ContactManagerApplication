@@ -10,7 +10,7 @@ import Combine
 public class GatewayAPI: APINetworking {
     /// paramter - offset - pagination number
     ///return the [Contacts] Model
-    public func fetchContactList(offset: String) -> AnyPublisher<[Contact], Error> {
+    public func fetchContactList(offset: String) -> AnyPublisher<[Contactdetails], Error> {
         let requestData = try? JSONEncoder().encode(ContactRequest.init(offset: offset))
         
         let urlRequest = URLRequest(url: APIEnvironment

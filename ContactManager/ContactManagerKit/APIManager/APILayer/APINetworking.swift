@@ -9,5 +9,5 @@ import Foundation
 import Combine
 /// Protocal implemented  GatewayAPI
 public protocol APINetworking {
-    func fetchContactList(offset: String) -> AnyPublisher<[Contact], Error>
+    func fetchContactList(offset: String) -> AnyPublisher<[Contactdetails], Error>
 }

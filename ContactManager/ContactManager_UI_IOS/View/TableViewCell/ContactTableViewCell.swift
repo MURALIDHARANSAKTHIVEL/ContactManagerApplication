@@ -35,7 +35,7 @@ class ContactTableViewCell: UITableViewCell, CellReusableIdentifier {
         self.profileViewImageView.layer.cornerRadius = profileViewImageView.frame.size.height / 2
     }
     /// Customize UI Model Setup
-    func set(from item: Contacts) {
+    func set(from item: Contactdetails) {
         nameUIlabel.text = item.name
         companyUIlabel.text = item.company
         profileViewImageView.image = UIImage.init(data: item.profile ?? Data())?.imageResize(withSize: .init(width: 75, height: 75))

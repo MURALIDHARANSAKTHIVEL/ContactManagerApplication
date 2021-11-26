@@ -23,7 +23,7 @@ public class  ContactDataViewModel {
         self.apiRepository = apiRepository
         observer()
     }
-    var contactList: [Contact] = []
+    var contactList: [Contactdetails] = []
     public func observer() {
         apiRepository.contactPublisher.sink(receiveCompletion: {_ in}, receiveValue: {
             result in

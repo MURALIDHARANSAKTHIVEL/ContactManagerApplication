@@ -10,7 +10,7 @@ import UIKit
 ///UI Contact Model
 public struct ContactUIModel {
     public var title: String?
-    public var contactList: [Contacts]?
+    public var contactList: [Contactdetails]?
 }
 ///Edit Profile UI Model
 public class KeyValueModel {

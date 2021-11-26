@@ -9,7 +9,7 @@ import UIKit
 
 class ContactViewController: UIViewController {
     @IBOutlet weak var tableview: UITableView!
-    
+    var contacts = [Contacts]()
     @IBOutlet weak var searchTextField: UISearchBar!
     var viewmodel: ContactListViewModel = ContactListViewModel() /// Viewmodel for store Data to show UI
     var searchActivate: Bool = true /// Is User active in Search Sessions
@@ -17,6 +17,7 @@ class ContactViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.initialSetup()
+        //contacts = CoreDataManager.shared.fetchAllData(Contacts.self) ?? []
     }
     ///Initial Setup for UI config
     private func initialSetup() {
@@ -36,7 +37,7 @@ class ContactViewController: UIViewController {
     private func refreshUIModel() {
         self.navigationSetup()
         /// To check the Active and group the unsorted list
-        viewmodel.ungroupedContactList = UserManager.shared.contacts
+        viewmodel.ungroupedContactList = UserManager.shared.contactDetails
         self.viewmodel.contactList = UserManager.shared.contactList
         if viewmodel.sortOrderType == .ReOrder {
         viewmodel.sortedOrder()
@@ -96,9 +97,10 @@ extension ContactViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableview.dequeueReusableCell(withIdentifier: ContactTableViewCell.identifier, for: indexPath) as? ContactTableViewCell
         let model =  viewmodel[indexPath]
-        cell?.set(from: model ?? Contacts() )
+        cell?.set(from: model ?? Contactdetails() )
         cell?.cellSelectedAction {
-            self.performSegue(withIdentifier: ContactEditViewController.identifier, sender: model)
+            let selectedmodel = self.viewmodel.pickSelectedContact(index: indexPath)
+            self.performSegue(withIdentifier: ContactEditViewController.identifier, sender: selectedmodel)
         }
         return cell ?? UITableViewCell()
     }
@@ -133,6 +135,7 @@ extension ContactViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         /// to get source and destination
         viewmodel.moveItem(at: sourceIndexPath.row, to: destinationIndexPath.row)
+        self.tableview.reloadData()
     }
 }
 ///Mark:- Seperation of code - UISearchbar Configuration

@@ -84,6 +84,7 @@ public class ContactEditViewModel {
     }
     /// Clicked Once Save click from User
     func mappingUpdatedValue() {
+        profilemodel?.sortId = profilemodel?.sortId ?? 0
         for item in keyValueModel {
             switch item.type {
             case .phone:

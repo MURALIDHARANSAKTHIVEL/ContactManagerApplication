@@ -83,9 +83,10 @@ class ContactEditViewController: UIViewController, StoryBoardSegueIdentifier, UI
         // add the actions (buttons)
         alert.addAction(UIAlertAction(title: "Continue", style: UIAlertAction.Style.default, handler: {_ in
             /// remove the selected model
-            UserManager.shared.contacts?.removeAll(where: {$0 == self.viewModel.profilemodel })
-            CoreDataManager.shared.context.delete( self.viewModel.profilemodel ?? Contacts())
-            try! CoreDataManager.shared.context.save()
+            CoreDataManager.shared.delete(model: self.viewModel.profilemodel)
+//            UserManager.shared.contacts?.removeAll(where: {$0 == self.viewModel.profilemodel })
+//            CoreDataManager.shared.context.delete( self.viewModel.profilemodel ?? Contacts())
+//            try! CoreDataManager.shared.context.save()
             self.successMessage()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
